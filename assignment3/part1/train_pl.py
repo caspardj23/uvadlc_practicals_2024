@@ -99,14 +99,12 @@ class VAE(pl.LightningModule):
         # PUT YOUR CODE HERE  #
         #######################
         z = torch.randn(batch_size, self.decoder.z_dim, device=self.decoder.device)
+
         logits = self.decoder(z)
 
-        probs = torch.softmax(logits, dim=1)
-        probs_flat = probs.permute(0, 2, 3, 1).reshape(-1, 16)
+        probs = F.softmax(logits, dim=1)
 
-        samples = torch.multinomial(probs_flat, 1)
-
-        x_samples = samples.reshape(batch_size, 1, 28, 28)
+        x_samples = probs.argmax(dim=1, keepdim=True)
         #######################
         # END OF YOUR CODE    #
         #######################
