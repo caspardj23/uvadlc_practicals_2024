@@ -119,7 +119,7 @@ def visualize_manifold(decoder, grid_size=20):
     z_values = normal_dist.icdf(perc)
 
     z1, z2 = torch.meshgrid(z_values, z_values, indexing="ij")
-    z = torch.stack([z1.flatten(), z2.flatten()], dim=1).to(decoder.device())
+    z = torch.stack([z1.flatten(), z2.flatten()], dim=1).to(decoder.device)
     x_samples = decoder(z)
     x_probs = torch.softmax(x_samples, dim=1)
 
