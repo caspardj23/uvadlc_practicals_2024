@@ -104,8 +104,10 @@ class VAE(pl.LightningModule):
         logits = self.decoder(z)
 
         probs = torch.softmax(logits, dim=1)
+        probs_flat = probs.permute(0, 2, 3, 1).reshape(-1, 16)
 
-        samples = torch.multinomial(probs.permute(0, 2, 3, 1).reshape(-1, 16), 1)
+        samples = torch.multinomial(probs_flat, 1)
+
         x_samples = samples.reshape(batch_size, 1, 28, 28)
         #######################
         # END OF YOUR CODE    #
