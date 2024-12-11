@@ -120,14 +120,16 @@ def visualize_manifold(decoder, grid_size=20):
 
     z1, z2 = torch.meshgrid(z_values, z_values, indexing="ij")
     z = torch.stack([z1.flatten(), z2.flatten()], dim=1).to(decoder.device)
+
     x_samples = decoder(z)
     x_probs = torch.softmax(x_samples, dim=1)
 
-    images = x_probs.reshape(grid_size, grid_size, *x_probs.shape[1:])
+    weights = torch.linspace(0, 1, 16, device=x_probs.device).view(1, 16, 1, 1)
+    grayscale_images = (x_probs * weights).sum(dim=1, keepdim=True)
 
-    img_grid = make_grid(
-        images.view(-1, *x_probs.shape[1:]), nrow=grid_size, padding=2, normalize=True
-    )
+    images = grayscale_images.reshape(grid_size, grid_size, 1, 28, 28)
+
+    img_grid = make_grid(images.view(-1, 1, 28, 28), nrow=grid_size, padding=2)
 
     #######################
     # END OF YOUR CODE    #
